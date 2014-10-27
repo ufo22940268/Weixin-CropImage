@@ -6,8 +6,11 @@
 
     <com.bettycc.cropimage.library.CropView
         android:id="@+id/crop"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:minHeight="@dimen/crop_size"
+        android:minWidth="@dimen/crop_size"
+        android:layout_centerInParent="true"
         />
 
 </RelativeLayout>

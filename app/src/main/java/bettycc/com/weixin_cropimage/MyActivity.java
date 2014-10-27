@@ -1,25 +1,22 @@
 package bettycc.com.weixin_cropimage;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.BitmapRegionDecoder;
-import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 
 import com.bettycc.cropimage.library.CropView;
 
-import uk.co.senab.photoview.PhotoViewAttacher;
-
 
 public class MyActivity extends ActionBarActivity {
 
     private CropView mCropView;
+    public static Bitmap bitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,9 +29,6 @@ public class MyActivity extends ActionBarActivity {
         // Set the Drawable displayed
         Drawable bitmap = getResources().getDrawable(R.drawable.android);
         mCropView.setImageDrawable(bitmap);
-
-        // Attach a PhotoViewAttacher, which takes care of all of the zooming functionality.
-//        mAttacher.setScaleType(ImageView.ScaleType.CENTER_CROP);
     }
 
 
@@ -56,11 +50,13 @@ public class MyActivity extends ActionBarActivity {
             ImageView view = new ImageView(this);
             Bitmap bitmap = mCropView.getCropedBitmap();
             view.setImageBitmap(bitmap);
+            this.bitmap = bitmap;
 
-            new AlertDialog.Builder(this)
-                    .setView(view)
-                    .setNegativeButton(android.R.string.cancel, null)
-                    .show();
+//            new AlertDialog.Builder(this)
+//                    .setView(view)
+//                    .setNegativeButton(android.R.string.cancel, null)
+//                    .show();
+            startActivity(new Intent(this, ShowBitmapActivity.class));
             return true;
         }
         return super.onOptionsItemSelected(item);
