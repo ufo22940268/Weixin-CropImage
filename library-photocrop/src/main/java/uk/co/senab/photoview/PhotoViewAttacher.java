@@ -53,9 +53,12 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
 
     // let debug flag be dynamic, but still Proguard can be used to remove from
     // release builds
-    private static final boolean DEBUG = Log.isLoggable(LOG_TAG, Log.DEBUG);
+//    private static final boolean DEBUG = Log.isLoggable(LOG_TAG, Log.DEBUG);
+    private static final boolean DEBUG = true;
 
     static final Interpolator sInterpolator = new AccelerateDecelerateInterpolator();
+    private static final float CROP_SIZE_IN_DP = 300;
+    private final float mCropSize;
     int ZOOM_DURATION = DEFAULT_ZOOM_DURATION;
 
     static final int EDGE_NONE = -1;
@@ -149,6 +152,10 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
     public PhotoViewAttacher(ImageView imageView) {
         mImageView = new WeakReference<ImageView>(imageView);
 
+        float density = imageView.getContext().getResources().getDisplayMetrics().density;
+        mCropSize = CROP_SIZE_IN_DP * density;
+
+
         imageView.setDrawingCacheEnabled(true);
         imageView.setOnTouchListener(this);
 
@@ -176,7 +183,8 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
                             mLongClickListener.onLongClick(getImageView());
                         }
                     }
-                });
+                }
+        );
 
         mGestureDetector.setOnDoubleTapListener(new DefaultOnDoubleTapListener(this));
 
@@ -385,18 +393,19 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
 
     @Override
     public void onFling(float startX, float startY, float velocityX,
-                              float velocityY) {
+                        float velocityY) {
         if (DEBUG) {
             LogManager.getLogger().d(
                     LOG_TAG,
                     "onFling. sX: " + startX + " sY: " + startY + " Vx: "
-                            + velocityX + " Vy: " + velocityY);
+                            + velocityX + " Vy: " + velocityY
+            );
         }
         ImageView imageView = getImageView();
         mCurrentFlingRunnable = new FlingRunnable(imageView.getContext());
         mCurrentFlingRunnable.fling(getImageViewWidth(imageView),
                 getImageViewHeight(imageView), (int) velocityX, (int) velocityY);
-        imageView.post(mCurrentFlingRunnable);
+//        imageView.post(mCurrentFlingRunnable);
     }
 
     @Override
@@ -440,7 +449,8 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
             LogManager.getLogger().d(
                     LOG_TAG,
                     String.format("onScale: scale: %.2f. fX: %.2f. fY: %.2f",
-                            scaleFactor, focusX, focusY));
+                            scaleFactor, focusX, focusY)
+            );
         }
 
         if (getScale() < mMaxScale || scaleFactor < 1f) {
@@ -721,6 +731,7 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
         }
 
         final int viewWidth = getImageViewWidth(imageView);
+        System.out.println("rect = " + rect);
         if (width <= viewWidth) {
             switch (mScaleType) {
                 case FIT_START:
@@ -736,7 +747,12 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
             mScrollEdge = EDGE_BOTH;
         } else if (rect.left > 0) {
             mScrollEdge = EDGE_LEFT;
-            deltaX = -rect.left;
+//            float v = (width - viewWidth) / 2;
+            float v1 = (viewWidth - mCropSize) / 2;
+            System.out.println("rect = " + rect);
+            if (rect.left > v1) {
+                deltaX = -(rect.left - v1);
+            }
         } else if (rect.right < viewWidth) {
             deltaX = viewWidth - rect.right;
             mScrollEdge = EDGE_RIGHT;
@@ -744,6 +760,8 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
             mScrollEdge = EDGE_NONE;
         }
 
+//        deltaX = 0;
+//        deltaY = 0;
         // Finally actually translate the matrix
         mSuppMatrix.postTranslate(deltaX, deltaY);
         return true;
@@ -1051,7 +1069,8 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
                 LogManager.getLogger().d(
                         LOG_TAG,
                         "fling. StartX:" + startX + " StartY:" + startY
-                                + " MaxX:" + maxX + " MaxY:" + maxY);
+                                + " MaxX:" + maxX + " MaxY:" + maxY
+                );
             }
 
             // If we actually can move, fling the scroller
@@ -1078,7 +1097,8 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
                             LOG_TAG,
                             "fling run(). CurrentX:" + mCurrentX + " CurrentY:"
                                     + mCurrentY + " NewX:" + newX + " NewY:"
-                                    + newY);
+                                    + newY
+                    );
                 }
 
                 mSuppMatrix.postTranslate(mCurrentX - newX, mCurrentY - newY);

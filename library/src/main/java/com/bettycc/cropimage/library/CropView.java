@@ -19,7 +19,6 @@ public class CropView extends PhotoView {
 
     private PhotoViewAttacher mAttacher;
     private float mCropSize;
-    private float mMinimumScale;
     private float mInitX;
     private float mInitY;
     public static String message;
@@ -57,13 +56,19 @@ public class CropView extends PhotoView {
             public boolean onPreDraw() {
                 float w = getWidth();
                 float h = w / mImageRatio;
+                float minimumscale;
+                if (h < getHeight()) {
+                } else {
+                    //Height is larger then screen size.
+                    w = getHeight()/h * w;
+                    h = getHeight();
+                }
                 float size = Math.min(w, h);
-
-                mMinimumScale = mCropSize / size;
-                mAttacher.setMinimumScale(mMinimumScale);
+                minimumscale = mCropSize / size;
+                mAttacher.setMinimumScale(minimumscale);
 
                 getViewTreeObserver().removeOnPreDrawListener(this);
-                mAttacher.setScale(mMinimumScale);
+                mAttacher.setScale(minimumscale);
 
                 mInitX = mAttacher.getDisplayRect().left;
                 mInitY = mAttacher.getDisplayRect().top;
