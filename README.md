@@ -15,10 +15,12 @@ Weixin-CropImage
 - 导入 library 就可以直接用CropView了。
 
 比如：
+
     <com.bettycc.cropimage.library.CropView
         android:id="@+id/crop"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         />
+        
         
 - 再不懂就看看 demo 嘛。
