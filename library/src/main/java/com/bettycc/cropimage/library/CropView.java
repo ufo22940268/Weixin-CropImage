@@ -23,6 +23,7 @@ public class CropView extends PhotoView {
     private float mInitX;
     private float mInitY;
     public static String message;
+    private float mImageRatio;
 
     public CropView(Context context) {
         super(context);
@@ -54,8 +55,9 @@ public class CropView extends PhotoView {
         viewTreeObserver.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
             public boolean onPreDraw() {
-                Bitmap visibleRectangleBitmap = getVisibleRectangleBitmap();
-                int size = Math.min(visibleRectangleBitmap.getWidth(), visibleRectangleBitmap.getHeight());
+                float w = getWidth();
+                float h = w / mImageRatio;
+                float size = Math.min(w, h);
 
                 mMinimumScale = mCropSize / size;
                 mAttacher.setMinimumScale(mMinimumScale);
@@ -69,6 +71,12 @@ public class CropView extends PhotoView {
                 return true;
             }
         });
+    }
+
+    @Override
+    public void setImageBitmap(Bitmap bm) {
+        mImageRatio = (float)bm.getWidth() / bm.getHeight();
+        super.setImageBitmap(bm);
     }
 
     @Override

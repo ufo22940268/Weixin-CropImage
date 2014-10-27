@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">library</string>
+    <string name="crop__pick_error">crop pick error</string>
 </resources>
