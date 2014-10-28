@@ -23,6 +23,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 
 import uk.co.senab.photoview.PhotoViewAttacher.OnMatrixChangedListener;
@@ -54,6 +55,21 @@ public class PhotoView extends ImageView implements IPhotoView {
         }
     }
 
+    @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+        final ViewTreeObserver viewTreeObserver = getViewTreeObserver();
+        viewTreeObserver.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                getViewTreeObserver().removeOnPreDrawListener(this);
+                mAttacher.mInitX = mAttacher.getDisplayRect().left;
+                mAttacher.mInitY = mAttacher.getDisplayRect().top;
+                return true;
+            }
+        });
+    }
+
     /**
      * @deprecated use {@link #setRotationTo(float)}
      */
@@ -61,7 +77,7 @@ public class PhotoView extends ImageView implements IPhotoView {
     public void setPhotoViewRotation(float rotationDegree) {
         mAttacher.setRotationTo(rotationDegree);
     }
-    
+
     @Override
     public void setRotationTo(float rotationDegree) {
         mAttacher.setRotationTo(rotationDegree);
@@ -273,7 +289,8 @@ public class PhotoView extends ImageView implements IPhotoView {
     }
 
     @Override
-    public void setOnDoubleTapListener(GestureDetector.OnDoubleTapListener newOnDoubleTapListener) {
+    public void setOnDoubleTapListener(GestureDetector.OnDoubleTapListener
+                                               newOnDoubleTapListener) {
         mAttacher.setOnDoubleTapListener(newOnDoubleTapListener);
     }
 

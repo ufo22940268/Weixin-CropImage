@@ -71,6 +71,8 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
     private float mMaxScale = DEFAULT_MAX_SCALE;
 
     private boolean mAllowParentInterceptOnEdge = true;
+    public float mInitX;
+    public float mInitY;
 
     private static void checkZoomLevels(float minZoom, float midZoom,
                                         float maxZoom) {
@@ -725,9 +727,17 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
                     break;
             }
         } else if (rect.top > 0) {
-            deltaY = -rect.top;
+//            deltaY = -rect.top;
+            float v1 = (viewHeight - mCropSize) / 2;
+            if (rect.top > v1) {
+                deltaY = -rect.top + v1;
+            }
         } else if (rect.bottom < viewHeight) {
-            deltaY = viewHeight - rect.bottom;
+//            deltaY = viewHeight - rect.bottom;
+            float v1 = (viewHeight - mCropSize) / 2;
+            if (viewHeight - rect.bottom > v1) {
+                deltaY = viewHeight - rect.bottom - v1;
+            }
         }
 
         final int viewWidth = getImageViewWidth(imageView);
@@ -747,14 +757,16 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
             mScrollEdge = EDGE_BOTH;
         } else if (rect.left > 0) {
             mScrollEdge = EDGE_LEFT;
-//            float v = (width - viewWidth) / 2;
             float v1 = (viewWidth - mCropSize) / 2;
             System.out.println("rect = " + rect);
             if (rect.left > v1) {
                 deltaX = -(rect.left - v1);
             }
         } else if (rect.right < viewWidth) {
-            deltaX = viewWidth - rect.right;
+            float v1 = (viewWidth - mCropSize) / 2;
+            if (  viewWidth - rect.right> v1) {
+                deltaX = viewWidth - rect.right  - v1;
+            }
             mScrollEdge = EDGE_RIGHT;
         } else {
             mScrollEdge = EDGE_NONE;
@@ -762,6 +774,7 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
 
 //        deltaX = 0;
 //        deltaY = 0;
+        System.out.println("deltaX = " + deltaX);
         // Finally actually translate the matrix
         mSuppMatrix.postTranslate(deltaX, deltaY);
         return true;
