@@ -23,7 +23,7 @@ Weixin-CropImage
         />
         
         
-- 再不懂就看看 demo 嘛。
+- 再不懂就看看 demo 嘛。demo从[这里](https://github.com/ufo22940268/Weixin-CropImage/releases)下载
 
 更新记录
 ======
